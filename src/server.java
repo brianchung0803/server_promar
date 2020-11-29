@@ -34,19 +34,18 @@ public class server implements Runnable
             System.out.println("Client accepted: " + socket);
             open();
             boolean done = false;
-            while (!done)
-            {  try
-                {   
-                    long len = input.readLong();
-                    byte[] bytes = new byte[(int) len];
-                    input.read(bytes);
-                    String msg = new String(bytes);
-                    System.out.println(" >> " + msg);
-                    done = msg.equals(".bye");
-               }
-               catch(IOException ioe)
-               {  done = true;  }
+            try
+               {   
+                  long len = input.readLong();
+                  byte[] bytes = new byte[(int) len];
+                  input.read(bytes);
+                  System.out.println("got client");
+                  System.out.println(len);
+                  //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,len);
             }
+            catch(IOException ioe)
+            {  done = true;  }
+            
             close();
          }
          catch(IOException ie)
@@ -71,6 +70,6 @@ public class server implements Runnable
 
    public static void main(String[] args) {
         server serv = null;
-        serv =  new server(30000);
+        serv =  new server(30002);
     }
 }
