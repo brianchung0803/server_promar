@@ -1,10 +1,16 @@
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.*;
 import java.io.*;
+
+
+
 
 
 public class server implements Runnable
@@ -34,18 +40,32 @@ public class server implements Runnable
             System.out.println("Client accepted: " + socket);
             open();
             boolean done = false;
-            try
-               {   
-                  long len = input.readLong();
-                  byte[] bytes = new byte[(int) len];
-                  input.read(bytes);
-                  System.out.println("got client");
-                  System.out.println(len);
-                  //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,len);
+            while(!done){
+               try
+                  {   
+                     long len = input.readLong();
+                     int length=0;
+                     System.out.println("got client");
+                     System.out.println(len);
+                     System.out.println("開始接收資料...");
+                     FileOutputStream fos = new FileOutputStream(new File("./cc.jpg"));
+                     ByteArrayOutputStream b_array_stream = new ByteArrayOutputStream();
+                     byte[]inputByte = new byte[100000];
+                     
+                     while (len > 0) {
+                        length = input.read(inputByte, 0, inputByte.length);
+                        len=len-length;
+                        fos.write(inputByte, 0, length);
+                        fos.flush();
+                        b_array_stream.write(inputByte, 0, length);
+                        b_array_stream.flush();
+                     }
+                        
+                     //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,len);
+               }
+               catch(IOException ioe)
+               {  done = true;  }
             }
-            catch(IOException ioe)
-            {  done = true;  }
-            
             close();
          }
          catch(IOException ie)
@@ -70,6 +90,6 @@ public class server implements Runnable
 
    public static void main(String[] args) {
         server serv = null;
-        serv =  new server(30002);
+        serv =  new server(30001);
     }
 }
