@@ -43,7 +43,7 @@ public class server implements Runnable
             while(!done){
                try
                   {   
-                     long len = input.readLong();
+                     int len = input.readInt();
                      int length=0;
                      System.out.println("got client");
                      System.out.println(len);
@@ -53,18 +53,29 @@ public class server implements Runnable
                      byte[]inputByte = new byte[100000];
                      
                      while (len > 0) {
-                        length = input.read(inputByte, 0, inputByte.length);
+                        length = input.read(inputByte, 0, Math.min(inputByte.length,len));
                         len=len-length;
                         fos.write(inputByte, 0, length);
                         fos.flush();
                         b_array_stream.write(inputByte, 0, length);
                         b_array_stream.flush();
                      }
+
+                     int poselen=input.readInt();
+                     System.out.println(poselen);
+                     byte[] poseByte=new byte[poselen];
+                     input.read(poseByte,0,poselen);
+                     String pose=new String(poseByte);
+                     System.out.println(pose);
+
                         
                      //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,len);
                }
                catch(IOException ioe)
-               {  done = true;  }
+               {
+                  System.out.println(ioe);
+                  done=true;
+               }
             }
             close();
          }
@@ -90,6 +101,6 @@ public class server implements Runnable
 
    public static void main(String[] args) {
         server serv = null;
-        serv =  new server(30001);
+        serv =  new server(30000);
     }
 }
